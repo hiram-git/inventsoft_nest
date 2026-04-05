@@ -275,6 +275,8 @@ Clerk es el servicio de autenticación del proyecto. El tier gratuito soporta ha
 
 Las migraciones crean todas las tablas en la base de datos.
 
+> **Importante:** Prisma lee `DATABASE_URL` desde `apps/api/.env`. Los scripts están configurados para apuntar a ese archivo automáticamente con `--env-file`, por lo que no necesitas copiar el `.env` a otro lugar.
+
 ```bash
 pnpm --filter @inventsoft/infrastructure db:migrate
 ```
@@ -292,6 +294,17 @@ Para verificar que las tablas se crearon correctamente, puedes abrir Prisma Stud
 pnpm --filter @inventsoft/infrastructure db:studio
 # Abre una interfaz visual en http://localhost:5555
 ```
+
+### Referencia de comandos de base de datos
+
+| Comando | Descripción |
+|---|---|
+| `db:migrate` | Aplica migraciones pendientes (desarrollo, con prompt) |
+| `db:migrate:prod` | Aplica migraciones en producción (sin prompt interactivo) |
+| `db:generate` | Regenera el cliente Prisma tras cambios en el schema |
+| `db:studio` | Abre Prisma Studio para explorar los datos visualmente |
+| `db:push` | Aplica el schema directo sin crear migración (solo prototipado) |
+| `db:reset` | **⚠️ Elimina y recrea la base de datos** (solo desarrollo) |
 
 ---
 
