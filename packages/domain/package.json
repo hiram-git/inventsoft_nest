@@ -1,0 +1,24 @@
+{
+  "name": "@inventsoft/domain",
+  "version": "0.0.1",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "scripts": {
+    "type-check": "tsc --noEmit",
+    "lint": "eslint \"src/**/*.ts\""
+  },
+  "dependencies": {
+    "@inventsoft/shared": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "20.17.10",
+    "typescript": "5.7.3"
+  }
+}

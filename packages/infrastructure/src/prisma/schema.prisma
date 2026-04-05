@@ -1,0 +1,153 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../../../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Inventory Context ────────────────────────────────────────────────────────
+
+model Product {
+  id          String   @id @default(cuid())
+  sku         String   @unique
+  name        String
+  description String   @default("")
+  quantity    Int      @default(0)
+  unitCost    Decimal  @db.Decimal(12, 4)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  purchaseOrderItems PurchaseOrderItem[]
+  saleOrderItems     SaleOrderItem[]
+
+  @@map("products")
+}
+
+model InventoryAdjustment {
+  id        String   @id @default(cuid())
+  productId String
+  delta     Int
+  reason    String
+  createdAt DateTime @default(now())
+
+  @@index([productId])
+  @@map("inventory_adjustments")
+}
+
+// ─── Purchases Context ────────────────────────────────────────────────────────
+
+model Supplier {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  phone     String?
+  address   String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  purchaseOrders PurchaseOrder[]
+
+  @@map("suppliers")
+}
+
+model PurchaseOrder {
+  id          String              @id @default(cuid())
+  supplierId  String
+  status      PurchaseOrderStatus @default(DRAFT)
+  totalAmount Decimal             @db.Decimal(14, 4)
+  notes       String?
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+
+  supplier Supplier            @relation(fields: [supplierId], references: [id])
+  items    PurchaseOrderItem[]
+
+  @@index([supplierId])
+  @@index([status])
+  @@map("purchase_orders")
+}
+
+model PurchaseOrderItem {
+  id              String        @id @default(cuid())
+  purchaseOrderId String
+  productId       String
+  quantity        Int
+  unitCost        Decimal       @db.Decimal(12, 4)
+  createdAt       DateTime      @default(now())
+
+  purchaseOrder PurchaseOrder @relation(fields: [purchaseOrderId], references: [id], onDelete: Cascade)
+  product       Product       @relation(fields: [productId], references: [id])
+
+  @@index([purchaseOrderId])
+  @@map("purchase_order_items")
+}
+
+enum PurchaseOrderStatus {
+  DRAFT
+  SUBMITTED
+  APPROVED
+  RECEIVED
+  CANCELLED
+}
+
+// ─── Sales Context ────────────────────────────────────────────────────────────
+
+model Customer {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  phone     String?
+  address   String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  saleOrders SaleOrder[]
+
+  @@map("customers")
+}
+
+model SaleOrder {
+  id          String          @id @default(cuid())
+  customerId  String
+  status      SaleOrderStatus @default(DRAFT)
+  totalAmount Decimal         @db.Decimal(14, 4)
+  notes       String?
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  customer Customer       @relation(fields: [customerId], references: [id])
+  items    SaleOrderItem[]
+
+  @@index([customerId])
+  @@index([status])
+  @@map("sale_orders")
+}
+
+model SaleOrderItem {
+  id          String   @id @default(cuid())
+  saleOrderId String
+  productId   String
+  quantity    Int
+  unitPrice   Decimal  @db.Decimal(12, 4)
+  createdAt   DateTime @default(now())
+
+  saleOrder SaleOrder @relation(fields: [saleOrderId], references: [id], onDelete: Cascade)
+  product   Product   @relation(fields: [productId], references: [id])
+
+  @@index([saleOrderId])
+  @@map("sale_order_items")
+}
+
+enum SaleOrderStatus {
+  DRAFT
+  CONFIRMED
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
