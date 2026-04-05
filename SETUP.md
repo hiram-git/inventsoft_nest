@@ -275,7 +275,21 @@ Clerk es el servicio de autenticación del proyecto. El tier gratuito soporta ha
 
 Las migraciones crean todas las tablas en la base de datos.
 
-> **Importante:** Prisma lee `DATABASE_URL` desde `apps/api/.env`. Los scripts están configurados para apuntar a ese archivo automáticamente con `--env-file`, por lo que no necesitas copiar el `.env` a otro lugar.
+> **Importante:** Prisma CLI busca `DATABASE_URL` en un archivo `.env` dentro de su propio directorio (`packages/infrastructure/.env`). Debes crear ese archivo antes de migrar.
+
+### 8.0 Crear `packages/infrastructure/.env`
+
+Crea el archivo `packages/infrastructure/.env` con la misma `DATABASE_URL` que usas en `apps/api/.env`:
+
+```env
+DATABASE_URL="postgresql://postgres:@localhost:5432/inventsoft_erp?schema=public"
+```
+
+Ajusta usuario y contraseña según tu configuración local (ver sección 4.1).
+
+> Este archivo **no se sube al repositorio** (está en `.gitignore`). El archivo `packages/infrastructure/.env.example` sirve como referencia.
+
+### 8.1 Ejecutar la migración
 
 ```bash
 pnpm --filter @inventsoft/infrastructure db:migrate
