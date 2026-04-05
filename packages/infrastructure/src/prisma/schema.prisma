@@ -40,6 +40,7 @@ model Warehouse {
 
   stockItems     StockItem[]
   stockMovements StockMovement[]
+  purchaseOrders PurchaseOrder[]
 
   @@map("warehouses")
 }
@@ -110,16 +111,23 @@ model Supplier {
 model PurchaseOrder {
   id          String              @id @default(cuid())
   supplierId  String
+  warehouseId String?             // Almacén destino (obligatorio al recibir)
   status      PurchaseOrderStatus @default(DRAFT)
   totalAmount Decimal             @db.Decimal(14, 4)
   notes       String?
+  submittedAt DateTime?
+  approvedAt  DateTime?
+  receivedAt  DateTime?
+  createdBy   String?             // Clerk userId
   createdAt   DateTime            @default(now())
   updatedAt   DateTime            @updatedAt
 
-  supplier Supplier            @relation(fields: [supplierId], references: [id])
-  items    PurchaseOrderItem[]
+  supplier  Supplier   @relation(fields: [supplierId], references: [id])
+  warehouse Warehouse? @relation(fields: [warehouseId], references: [id])
+  items     PurchaseOrderItem[]
 
   @@index([supplierId])
+  @@index([warehouseId])
   @@index([status])
   @@map("purchase_orders")
 }

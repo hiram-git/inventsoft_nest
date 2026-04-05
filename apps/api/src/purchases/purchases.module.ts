@@ -1,10 +1,12 @@
 import { Module } from '@nestjs/common';
-import { PurchasesController } from './purchases.controller';
-import { PurchasesService } from './purchases.service';
+import { SupplierController } from './supplier.controller';
+import { SupplierService } from './supplier.service';
+import { PurchaseOrderController } from './purchase-order.controller';
+import { PurchaseOrderService } from './purchase-order.service';
 
 @Module({
-  controllers: [PurchasesController],
-  providers: [PurchasesService],
-  exports: [PurchasesService],
+  controllers: [SupplierController, PurchaseOrderController],
+  providers: [SupplierService, PurchaseOrderService],
+  exports: [SupplierService, PurchaseOrderService],
 })
 export class PurchasesModule {}
