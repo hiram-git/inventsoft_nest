@@ -1,3 +1,4 @@
+export * from './prisma/prisma.module';
 export * from './prisma/prisma.service';
 export * from './redis/redis.config';
 export * from './redis/redis.client';

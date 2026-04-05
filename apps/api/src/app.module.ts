@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { BullModule } from '@nestjs/bullmq';
+import { PrismaModule } from '@inventsoft/infrastructure';
 import { InventoryModule } from './inventory/inventory.module';
 import { PurchasesModule } from './purchases/purchases.module';
 import { SalesModule } from './sales/sales.module';
@@ -21,6 +22,9 @@ import { ReportingModule } from './reporting/reporting.module';
         password: process.env['REDIS_PASSWORD'] || undefined,
       },
     }),
+
+    // Global: PrismaService disponible en todos los módulos sin importar
+    PrismaModule,
 
     InventoryModule,
     PurchasesModule,
